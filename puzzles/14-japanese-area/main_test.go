@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func Test_parseJapaneseNumber(t *testing.T) {
 	t.Run("happy cases", func(t *testing.T) {
@@ -16,19 +20,13 @@ func Test_parseJapaneseNumber(t *testing.T) {
 
 		for jaNum, val := range tests {
 			computed, err := parseJapaneseNumber(jaNum)
-			if err != nil {
-				t.Errorf("%s: error occured when it should not have: %s", jaNum, err)
-			}
-			if val != computed {
-				t.Errorf("mismatch! expected %d, got %d for input %s", val, computed, jaNum)
-			}
+			assert.NoError(t, err)
+			assert.Equal(t, val, computed)
 		}
 	})
 
 	t.Run("error cases", func(t *testing.T) {
 		_, err := parseJapaneseNumber("三百二x十一")
-		if err == nil {
-			t.Errorf("no error returned on invalid character")
-		}
+		assert.Error(t, err)
 	})
 }
