@@ -53,7 +53,7 @@ func chunk28(x []int32) []byte {
 
 func futureDecode(b []byte) []int32 {
 	var ret []int32
-	for i := 0; i < len(b) && len(ret) < 100; {
+	for i := 0; i < len(b); {
 		firstByte := b[i]
 		var v int32
 		var size int
@@ -90,6 +90,11 @@ func futureDecode(b []byte) []int32 {
 			v = (v << 6) | int32(c&0x3F)
 		}
 
+		if v == 0 {
+			// null byte, end it
+			break
+		}
+
 		ret = append(ret, v)
 		i += size
 	}
@@ -115,17 +120,12 @@ func decrypt(x string) string {
 
 	for _, curr := range t {
 		chunks = append(chunks, curr)
-		fmt.Printf("%x", curr)
 	}
-	fmt.Printf("\n")
 
 	c := chunk20(chunks)
-	fmt.Printf("%x\n", c)
 
 	fd := futureDecode(c)
-	fmt.Printf("%x\n", fd)
 	fd2 := chunk28(fd)
-	fmt.Printf("%x\n", fd2)
 	c2 := futureDecode(fd2)
 
 	return string(c2)
